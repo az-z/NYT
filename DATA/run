@@ -1,0 +1,18 @@
+#!/bin/ksh
+
+# Quick recreation of the environment
+# Dep:
+#	sqlite3, ksh
+
+
+if [ -f db_stars ]; then
+	rm db_stars
+fi
+
+sqlite3 db_stars <<EOF
+.read create_table.sql 
+.quit ;
+
+EOF
+
+echo "DB created and populated"
