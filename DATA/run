@@ -11,6 +11,7 @@ fi
 
 sqlite3 db_stars <<EOF
 .read create_table.sql 
+delete from hygdata0 where id='id' ;
 .quit ;
 
 EOF
