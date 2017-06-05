@@ -1,16 +1,37 @@
 # ref https://docs.scipy.org/doc/scipy/reference/spatial.html#spatial-data-structures-and-algorithms
 # run in 2.7
-import sys
+import sys, os
 from scipy.spatial import KDTree
 import numpy
 import sqlite3 as sql3
+import argparse
+
+
+# TODO 1: read input instead: \                     - DONE
+# TODO 1:  if no params - assume Earth [0,0]... \   - DONE
+# TODO 1:  read K - number of nearby stars          - DONE
+
+# TODO 3:  Add functions.               - maybe if i have time.
+
+
+parser = argparse.ArgumentParser(description='Script looks up shortest distances to the selected coordinates.')
+parser.add_argument('-T', '--top'    ,help='Max shortest distances to the stars from provided coordinates',type=int,required=True)
+parser.add_argument('-XYZ','--xyz'   ,help='XYZ Decart coordinates in form \'X,Y,Z\'; Default to (0,0,0) (Earth) ',default='0,0,0')
+
+args = parser.parse_args()
+K = args.top # ingenious decision
+point = [ float(i) for i in  args.xyz.split(',')]
+
+# Lets get the env setup a bit
+path= os.path.dirname(os.path.realpath(__file__))
 
 DIM = 3  # dimensions
 
 # TODO: work with DB - DONE
 con = None
+
 try:
-	con = sql3.connect('../DATA/db_stars')
+	con = sql3.connect(path + '/../DATA/db_stars')  # scary
 	con.text_factory = str
 	cur = con.cursor()
 	# cur.execute('SELECT id,bf,x,y,z from hygdata0 LIMIT 2')
@@ -37,15 +58,6 @@ a = numpy.array(data)
 
 a.shape = a.size / DIM, DIM
 
-# TODO 1: read input instead: \
-# TODO 1:  if no params - assume Earth [0,0]... \
-# TODO 1:  read K - number of nearby stars
-# TODO 3:  Add functions.
-
-K=2
-point = [10.0, 12.234, 50.432]  # highly intelligent pick
-print 'point:', point
-
 tree = KDTree(a, leafsize=a.shape[0] + 1)
 print("Tree is built")
 
@@ -56,11 +68,11 @@ distances, ndx = tree.query([point], k=K)
 
 # TODO 2: get the dname/description for these stars from DB  - DONE
 
-con = sql3.connect('../DATA/db_stars')
+con = sql3.connect(path+'/../DATA/db_stars')
 con.text_factory = str
 cur = con.cursor()
 
-print "Top %d closest stars to selected location:" % K
+print "Top %d closest stars to the selected coordinates (%s):" % (K, point)
 for row in a[ndx]:
 	for item in row:
 		cur.execute(
