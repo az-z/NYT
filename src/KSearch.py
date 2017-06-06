@@ -84,8 +84,6 @@ for row in a[ndx]:
 			print "ID - %(id)s , Common Name - %(proper)s , Dist - %(dist)s , X- %(x)s, Y- %(y)s , Z- %(z)s" % \
 			      {"id": i[0], "proper": i[1], "dist": i[2], "x": i[3], "y": i[4], "z": i[5]}
 
-
-
 # cur.execute('SELECT id, proper, dist, x,y,z from hygdata0 where x = {x} and y = {y} and z = {z}'.format(x=xyz[0], y=xyz[1], z=xyz[2]))
 # data = cur.fetchall()
 # for i in data:
