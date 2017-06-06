@@ -12,6 +12,7 @@ fi
 sqlite3 db_stars <<EOF
 .read create_table.sql 
 delete from hygdata0 where id='id' ;
+create index xyz_idx on hygdata0(x,y,z);
 .quit ;
 
 EOF
