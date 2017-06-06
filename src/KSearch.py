@@ -81,7 +81,7 @@ for row in a[ndx]:
 				                                                                                            z=item[2]))
 		data = cur.fetchall()
 		for i in data:
-			print "DBID - %(id)s , Common Name - %(proper)s , Dist - %(dist)s , X- %(x)s, Y- %(y)s , Z- %(z)s" % \
+			print "ID - %(id)s , Common Name - %(proper)s , Dist - %(dist)s , X- %(x)s, Y- %(y)s , Z- %(z)s" % \
 			      {"id": i[0], "proper": i[1], "dist": i[2], "x": i[3], "y": i[4], "z": i[5]}
 
 
