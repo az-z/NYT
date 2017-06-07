@@ -1,55 +1,54 @@
-Task:
- to collect app's requests' response times ( messages <key:value>).
+﻿Task:
+ to collect app's requests' response times (messages <key:value>).
 
 Conditions:
- message = <request: response time>
- another service is responsible for aggregation and respresentation of the results.
+ message = <request : response time>
+ another service is responsible for aggregation and representation of the results.
  collection service should be independent from a query service/app/client
  10 apps, 10K messages per second initially, with further increase of system utilization by 10^3 (not clear what this means)
  system can be off the shelf of home built
 
-Expected result:
- make a drawing of the system; explain characteristics of each part of the system and where they can hit the breaing point
+Expected outcome:
+ make a drawing of the system; explain characteristics of each part of the system and where they can hit breaking point
 
 Larger picture:
- looks like there is a desire to monitor avaialbility, perfromance and (most likely) collection of the REF data for further analyses.
+ looks like there is a desire to monitor availability, performance and (most likely) collection of the REF data for further analyses.
 
 
 
 Solution Discussion:
 
- the matrics collection is asked to consist of 2 independent services : metrics collection and metrcis reporting.
- the collection service should not interfere with the application and ivice versa -application availaibility can not depend on the one of the collection service;
+ the metrics collection application is to have 2 independent services : metrics collection and metrics reporting.
+ the collection service should not interfere with the application and vice verse -application availability can not depend on the one of the collection service;
  the application will send JSON type messages and,  probably in the future, there will be a desire to collect more information about application and connected clients - > both the complexity and frequency of the messages will increase.
 
-There is no information about the delivery time or budget.
-As such, i'll use my expirience as a guiding factor.
+There is no information about the delivery time frame or budget.
+As such, i'll use my experience as a guiding factor.
 
 Assuming there is a desire to build in-house monitoring solution:
- a. an app should be "dumping" messages - no (minimum) wait for the message receipt confirmation 
- b. messages across apps will wary in complexity over time and applications - collection service should not perform any validation/parsing of the incoming messages. Ideally it would persist the message and insure the delivery once the connection to the reporting service is avaialble.
+ a. an app should be "dumping" messages - no or minimum wait for the message receipt confirmation 
+ b. messages across apps will wary in complexity over time and applications - collection service should not perform any validation/parsing of the incoming messages. Ideally it would persist the message and insure the delivery once the connection to the reporting service is available.
 
- I can suggest of 2 approaches to the collection service architecture:
-   a lightweight service instance deployed alongside the app ( one per host, if multiple apps are on the same host):
-	a. have an app to communicate (IPC, loop ) with the instance 
+ I can suggest 2 approaches to the collection service architecture. In both cases
+   a lightweight service instance is deployed alongside the app (one per host, if multiple apps are on the same host):
+	a. have an app to communicate (IPC, loop) with the instance 
    	b. have the app to write a log file and the collection service takes over from there.
- i prefer option b as more flexible, cost efficient  and less intrusive for the existing environment. 
+ i prefer option b as more flexible, cost efficient, with higher performance and been less intrusive for the existing environment. 
 
 
 Query service:
- in case of option b( for the collection service), we don't have to deal with a large number of concurrent connections. As such we can insure an almost linear scalability using just a pair of Apache servers ( low estimate: one per 10^4 hosts; 2 apps per server => 20x10^4 applicaitons) ). Should this not be a desirable approach, we can look into NGNIX servers and/or other frameworks (Twisted) to standup the http ends.
- The persistent layer is critical piece of the system.
+ in case of option b( for the collection service), we don't have to deal with a large number of concurrent connections on the “query” part. As such we can enjoy an almost linear scaling using a pair of Apache servers (low level estimate: one per 10^4 hosts; 2 apps per server => 200x10^3 applications) ). Should this not be a desirable approach, we can look into NGNIX servers and/or other frameworks (Twisted) to stand up the http ends to process the incoming streams.
+ The persistent layer is critical piece for the system.
 
- the requirement to have a specific data structure is unclear.
+ the case for the requirement (to have a specific data structure) is unclear.
  
- the amount of data to be streamed and ( more importantly) analysed down the road asks for a cluster solution. 
- We can evaluate Riak/Radis with calculations' results (hourly/specified interval) offloaded onto Hadoop cluster. Alternatevly we can examine Cassandra .
+ the amount of data to be streamed and (more importantly) analyzed asks for a cluster solution. 
+ We can evaluate Riak/Radis with calculations' results (hourly/specified interval) offloaded onto Hadoop cluster. Alternatively we can examine Cassandra as good solution for heavy write systems.
 
 
 
 
-Assuming there is a desire to have a fixed cost/fixed time solution and focus on other aspects of work:
- i'd start with runing a few POCs with the following vendors:
-		Splunk
-		
-
+Assuming there is a desire to have a fixed cost/fixed time solution with focus on systems performance and data analyses:
+ i'd start with running a few POCs with the following vendors/existing solutions:
+		Splunk, SolarWinds, Kafka/ Kafka Streams 
+		Graphite with a lot of collection daemons/options
