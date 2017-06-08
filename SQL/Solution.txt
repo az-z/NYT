@@ -21,7 +21,7 @@ LATEST_DATE	NAME
 
 
 Question:
-2. for each customer, show the largest absolute change in quantity between orders. Use window clause of analytical functions, disregard days with NULL orders; several orders on one day - one order; ignore change from "non customer" to "customer"
+2. for each customer, show the largest absolute change in quantity between orders. Use window clause of analytical functions, disregard days with NULL orders; several orders on one day - one order; ignore change from "non customer" to "customer" and customers with only one order
 
 select a.name,
         a.order_day_DD,
@@ -51,5 +51,8 @@ where a.diff_ = a.max_diff
 order by name
 ;
 
-
+NAME	ORDER_DAY_DD	MAX_DIFF
+Comp_A	03-JUN-17	5
+Comp_B	03-JUN-17	-5
+Comp_C	06-JUN-17	-29
 
