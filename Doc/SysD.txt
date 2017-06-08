@@ -1,15 +1,15 @@
 ﻿Task:
- to collect apps' requests response times (messages <key:value>).
+ to design the metrics system for collectin response times from an app in the form of <key:value> messages.
 
 Conditions:
  message = <request : response time>
  another service is responsible for aggregation and representation of the results.
  collection service should be independent from a query service/app/client
- 10 apps, 10K messages per second initially, with further increase of system utilization by 10^3 (not clear what this means)
+ 10 apps, 10K messages per second initially, with further increase of system utilization by 10^3
  system can be off the shelf of home built
 
 Expected outcome:
- make a drawing of the system; explain characteristics of each part of the system and potential limits of scalability/performance bottle necks
+ make a drawing of the system; explain characteristics of each part of the system and potential limits of scalability/performance
 
 Larger picture:
  looks like there is a desire to monitor availability, performance and (most likely) collection of the REF data for further analyses.
@@ -18,49 +18,60 @@ Larger picture:
 
 Solution Discussion:
 
- the performance monitoring system (APM) is to have 2 independent services : metrics collection and metrics reporting.
- the collection service should not interfere with the application and vice verse -application does  not dependent on the collection service;
- the application will send JSON type messages and,  probably in the future, there will be a desire to collect more information about application and connected clients - > both the complexity and frequency of the messages will increase.
+For "in-house built" solution, i'd suggest looking into Kafka based solutions.
 
-The task provides no information about the delivery time frame or budget.
+Pros:
+	the fast, scalable, fault tolerent publich/subscribe, open source solution widly adopted by the industry 
+	can be integrated with Apache Storm, Hbase and Spark for realtime analyses of incoming data, as well as 
+	can be further leveregaed as a central data integration hub for the enterprise.
 
-As such, i'll use my experience for the similiar situations.
+	Perf metrics: 	https://engineering.linkedin.com/kafka/benchmarking-apache-kafka-2-million-writes-second-three-cheap-machines
+	Use Cases: 	https://kafka.apache.org/uses
+	Adoption: 	https://www.datanami.com/2016/04/06/real-time-rise-apache-kafka/
+			http://www.ebaytechblog.com/2017/03/14/rheos/
+	integration: 	https://hortonworks.com/apache/kafka/
 
-The intital conceptual model:
- a. collection service
- b. persistance service (data storage layer)
- c. query service
+Cons:
+	Cost - each application needs to be integrated (modified) with kafka
+
+
+
+The persistance layer can be a hadoop cluster or an RDBMS or Spark.
+In case of batch processing - hadoop and/or rdbms will be well equiped to deal with the work
+in case of the realtime processing the integration with Apache Spark maybe reviewed.
+
+Pros:
+	RDBMSs are widly adopted and Query service can be easily (inexpensivly) built using existing entrprise stack.
+	Hadoop infrustrucutre with introduction of security functionality can be recommended as an scalable, high performance and scalable solution.
+
+	https://www.confluent.io/blog/stream-data-platform-1/
+	http://meuslivros.github.io/kafka/ch07s02.html
+
+Cons:
+	the performance limitations of the RDMBSes are well known
+	the performance of hadoop is are not really an issue for well balanced jobs. In my expirience the cluster of 6 dell PowerEdge R730 was sufficient 
+	to support streaming data from 9 million devices. The issues to be aware range from cross DC replication and jobs/data affinity, to skills gap and data 
+	management.
+	
+	https://techblog.netflix.com/2014/09/inviso-visualizing-hadoop-performance.html
+	http://www.cbronline.com/news/big-data/5-hadoop-problems-and-how-to-fix-them-4823399/
+
+
  
-Collection service:
- a. an app should be "dumping" messages - none or minimal wait for the message receipt confirmation 
- b. messages across installation base will wary in complexity - Id suggest to limit the Collection service functionality to persisting a message and insuring the delivery.
-
- I can think of  2 approaches to the collection service architecture. In both cases 
-  a lightweight service instance is deployed alongside the app (one per host, if multiple apps are on the same host):
-	a. have an app to communicate (IPC, loop) with the instance 
-   	b. have the app to write a log file and the collection service takes over from there.
- Based on  my expirience, i'd examine option b as flexible, cost efficient, with predictible performance and less intrusive for the existing environment. 
-
-Persistence layer:
- The persistent layer is critical piece for the system.
- in case of option b( for the collection service), we don't have to deal with a large number of concurrent connections on the “datastorage” part. As such we can enjoy an almost linear scaling using a pair of Apache servers (low level estimate: one per 10^4 hosts; 2 apps per server => 200x10^3 applications) ). Alternatevly, we can look into NGNIX servers and other frameworks (Twisted) to stand up the http ends to process the incoming streams.
-
-// the use case for a specific data structure requirement is unclear.
- 
- the amount of data to be streamed and (more importantly) analyzed asks for a cluster solution. 
- We can evaluate Riak with calculations' results (hourly/specified interval) offloaded onto Hadoop cluster. Alternatively we can examine Cassandra as solid solution for heavy write systems with flexible data model.
+Query service can be built using any of the in house frameworks based on Apache/IIS server or leveraging Hadoop's API: 
+	https://hadoop.apache.org/docs/current/hadoop-yarn/hadoop-yarn-site/WebServicesIntro.html
+	https://dzone.com/articles/integrating-big-data-platforms-with-bedrock-rest-a?fromrel=true
 
 
-If there is a desire and time to invest into the solution, we can look into leveraging a Kafka base solution. Delivering astounding message write performance and been very flexible on the "query" service, it will take some time to develop and it will always require developers' time for developing a new performance reports.
 
-In case of off-the-shell solution, with the focus on systems performance and data analyses:
- i'd look into following vendors/existing solutions:
+For the off-the-shell solution, i'd look into following vendors/existing solutions:
 		Splunk, SolarWinds,
-		Graphite has lot of collection daemons/options
+		Graphite
+	Splunk, for example, requires no application modification and allows to build various complexity reports on the batched and streaming data.
+Pros:
+	ready to use end-to-end solution; minimal to none modification to the existing systems/applications.
+	predictible (linear) performance (collect point) with the minimum resource footprint - splunk forwarder reads and ships log files.
+	can be levereaged for other use cases ranging from systems/applications' performance monitoring to intrusion detection, etc.
 
-
-
-References:
-http://docs.basho.com/riak/kv/2.2.3/learn/use-cases/
-https://academy.datastax.com/use-cases/internet-of-things-time-series
-https://www.nginx.com/solutions/
+Cons:
+	cost to acquir and training.
