@@ -1,5 +1,5 @@
 ﻿Task:
- to design the metrics system for collectin response times from an app in the form of <key:value> messages.
+ to design the metrics system for collection response times from an app in the form of <key:value> messages.
 
 Conditions:
  message = <request : response time>
@@ -21,11 +21,11 @@ Solution Discussion:
 For "in-house built" solution, i'd suggest looking into Kafka based solutions.
 
 Pros:
-	the fast, scalable, fault tolerent publich/subscribe, open source solution widly adopted by the industry 
-	can be integrated with Apache Storm, Hbase and Spark for realtime analyses of incoming data, as well as 
-	can be further leveregaed as a central data integration hub for the enterprise.
+	the fast, scalable, fault tolerant publish/subscribe, open source solution widely adopted by the industry
+	can be integrated with Apache Storm, Hbase and Spark for real-time analyses of incoming data, as well as
+	can be further leveraged as a central data integration hub for the enterprise.
 
-	Perf metrics: 	https://engineering.linkedin.com/kafka/benchmarking-apache-kafka-2-million-writes-second-three-cheap-machines
+	Performance metrics: 	https://engineering.linkedin.com/kafka/benchmarking-apache-kafka-2-million-writes-second-three-cheap-machines
 	Use Cases: 	https://kafka.apache.org/uses
 	Adoption: 	https://www.datanami.com/2016/04/06/real-time-rise-apache-kafka/
 			http://www.ebaytechblog.com/2017/03/14/rheos/
@@ -36,29 +36,29 @@ Cons:
 
 
 
-The persistance layer can be a hadoop cluster or an RDBMS or Spark.
-In case of batch processing - hadoop and/or rdbms will be well equiped to deal with the work
-in case of the realtime processing the integration with Apache Spark maybe reviewed.
+The persistence layer can be a Hadoop cluster or an RDBMS or Spark.
+In case of batch processing - Hadoop and/or rdbms will be well equipped to deal with the work
+in case of the real-time processing the integration with Apache Spark maybe reviewed.
 
 Pros:
-	RDBMSs are widly adopted and Query service can be easily (inexpensivly) built using existing entrprise stack.
-	Hadoop infrustrucutre with introduction of security functionality can be recommended as an scalable, high performance and scalable solution.
+	RDBMSs are widely adopted and Query service can be easily (inexpensively) built using existing enterprise stack.
+	Hadoop infrastructure with introduction of security functionality can be recommended as an scalable, high performance and scalable solution.
 
 	https://www.confluent.io/blog/stream-data-platform-1/
 	http://meuslivros.github.io/kafka/ch07s02.html
 
 Cons:
 	the performance limitations of the RDMBSes are well known
-	the performance of hadoop is are not really an issue for well balanced jobs. In my expirience the cluster of 6 dell PowerEdge R730 was sufficient 
-	to support streaming data from 9 million devices. The issues to be aware range from cross DC replication and jobs/data affinity, to skills gap and data 
+	the performance of Hadoop is are not really an issue for well balanced jobs. In my experience the cluster of 6 dell PowerEdge R730 was sufficient
+	to support streaming data from 9 million devices. The issues to be aware range from cross DC replication and jobs/data affinity, to skills gap and data
 	management.
-	
+
 	https://techblog.netflix.com/2014/09/inviso-visualizing-hadoop-performance.html
 	http://www.cbronline.com/news/big-data/5-hadoop-problems-and-how-to-fix-them-4823399/
 
 
- 
-Query service can be built using any of the in house frameworks based on Apache/IIS server or leveraging Hadoop's API: 
+
+Query service can be built using any of the in house frameworks based on Apache/IIS server or leveraging Hadoop's API:
 	https://hadoop.apache.org/docs/current/hadoop-yarn/hadoop-yarn-site/WebServicesIntro.html
 	https://dzone.com/articles/integrating-big-data-platforms-with-bedrock-rest-a?fromrel=true
 
@@ -70,8 +70,11 @@ For the off-the-shell solution, i'd look into following vendors/existing solutio
 	Splunk, for example, requires no application modification and allows to build various complexity reports on the batched and streaming data.
 Pros:
 	ready to use end-to-end solution; minimal to none modification to the existing systems/applications.
-	predictible (linear) performance (collect point) with the minimum resource footprint - splunk forwarder reads and ships log files.
-	can be levereaged for other use cases ranging from systems/applications' performance monitoring to intrusion detection, etc.
+	predictable (linear) performance (collect point) with the minimum resource footprint - splunk forwarder reads and ships log files.
+	can be leveraged for other use cases ranging from systems/applications' performance monitoring to intrusion detection, etc.
 
 Cons:
-	cost to acquir and training.
+	cost to acquire and training.
+  I was unable to locate solid performance data. From my experience, I know that for 4.5TB data set ( 2000 devices, 50GB daily volume,
+  3 months in active storage; 2x16 CPU, 48GB RAM VM hosts) the average complexity date range searches ("Last 3 hours") completes at
+  about 15 seconds; first results - in 3-5 seconds.
