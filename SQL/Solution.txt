@@ -1,0 +1,55 @@
+Question:
+1. With provided tables structure find  customers ( customer.name) with the latest order dates.
+
+Solution:
+
+with order_ as (
+select max(o.order_date) latest_date, o.CUSTOMER_ID from orders o
+where o.QUANTITY is not NULL
+group by o.CUSTOMER_ID
+order by o.CUSTOMER_ID )
+select order_.latest_date, cus.name from CUSTOMERS cus, order_
+where cus.CUSTOMER_ID = order_.CUSTOMER_ID
+
+LATEST_DATE	NAME
+----------------------
+03-JUN-17	Comp_A
+03-JUN-17	Comp_B
+06-JUN-17	Comp_C
+05-JUN-17	Comp_D
+01-JUN-17	Comp_E
+
+
+Question:
+2. for each customer, show the largest absolute change in quantity between orders. Use window clause of analytical functions, disregard days with NULL orders; several orders on one day - one order; ignore change from "non customer" to "customer"
+
+select a.name,
+        a.order_day_DD,
+        a.max_diff
+from (
+                select  ord_c.name,
+                        ord_c.order_day_DD,
+                        ord_c.diff_,
+                        max((ord_c.diff_)) keep ( dense_rank last order by ord_c.order_day_DD ) over (partition by ord_c.name) as max_diff
+                from (
+                    select  
+                             cust.name, 
+                             (o.order_quantity_sum - LAG(o.order_quantity_sum,1) over (partition by o.customer_id order by order_day_DD) ) as diff_,
+                             o.order_day_DD
+                       from (
+                              select o.customer_id ,trunc(o.order_date,'DD') as order_day_DD, sum(o.quantity) as order_quantity_sum 
+                                from orders o
+                                    where o.QUANTITY is not null
+                                    group by o.customer_id, trunc(o.order_date,'DD')
+                                    order by o.customer_id
+                            ) o, customers cust
+                        where o.customer_id = cust.customer_id
+                    ) ord_c            
+                where ord_c.diff_ is not null
+                ) a
+where a.diff_ = a.max_diff
+order by name
+;
+
+
+
