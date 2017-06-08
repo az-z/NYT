@@ -1,0 +1,44 @@
+Examples:
+
+$ python2.7 ./findstars -h
+usage: findstars [-h] -T TOP [-XYZ XYZ]
+
+Look up shortest distances between provided coordinates and nearby stars.
+
+optional arguments:
+  -h, --help           show this help message and exit
+  -T TOP, --top TOP    Max nearby stars
+  -XYZ XYZ, --xyz XYZ  XYZ Decart coordinates in form of 'X,Y,Z'; Default to
+                       '0,0,0' (Earth)
+
+
+
+$ python2.7 ./findstars -T 10
+Tree is built
+Top 10 closest stars to the selected coordinates ([0.0, 0.0, 0.0]):
+ID- 0 	  , Common Name-  Sol              , Dist- 0.0    , X- 5e-06    , Y- 0         , Z- 0
+ID- 70666 , Common Name-  Proxima Centauri , Dist- 1.2959 , X- -0.472264, Y- -0.361451 , Z- -1.151219
+ID- 71453 , Common Name-                   , Dist- 1.3248 , X- -0.495181, Y- -0.413973 , Z- -1.156674
+ID- 71456 , Common Name-  Rigil Kentaurus  , Dist- 1.3248 , X- -0.495203, Y- -0.414084 , Z- -1.156625
+ID- 87665 , Common Name-  Barnard's Star   , Dist- 1.8238 , X- -0.017373, Y- -1.816613 , Z- 0.149123
+ID- 118720 , Common Name-                  , Dist- 2.3906 , X- -2.282811, Y- 0.649334  , Z- 0.292057
+ID- 53879 , Common Name-  Lalande 21185    , Dist- 2.5469 , X- -1.998,    Y- 0.504305  , Z- 1.495504
+ID- 118079 , Common Name-   		   , Dist- 2.6267 , X- 2.270499,  Y- 1.04697 ,   Z- -0.809963
+ID- 118080 , Common Name-   		   , Dist- 2.6267 , X- 2.270631,  Y- 1.047031 ,  Z- -0.81001
+ID- 32263 , Common Name-  Sirius 	   , Dist- 2.6371 , X- -0.494323, Y- 2.476731 ,  Z- -0.758485
+
+
+$ python2.7 ./findstars -T 10 --xyz '100.0, 200.0, 0.00'
+Tree is built
+Top 10 closest stars to the selected coordinates ([100.0, 200.0, 0.0]):
+ID- 19675 , Common Name-   , Dist- 220.2643 , X- 98.574789, Y- 196.926154 , Z- -4.419684
+ID- 19766 , Common Name-   , Dist- 216.9197 , X- 95.943051, Y- 194.511825 , Z- -3.776124
+ID- 20028 , Common Name-   , Dist- 224.2152 , X- 96.169556, Y- 202.325422 , Z- -9.396595
+ID- 19290 , Common Name-   , Dist- 228.3105 , X- 106.518737, Y- 201.656058 , Z- -10.690045
+ID- 20052 , Common Name-   , Dist- 213.6752 , X- 91.429749, Y- 192.906194 , Z- 9.210601
+ID- 18744 , Common Name-   , Dist- 214.1328 , X- 105.773105, Y- 186.148101 , Z- -3.713567
+ID- 19729 , Common Name-   , Dist- 238.0952 , X- 105.804021, Y- 213.183728 , Z- 6.89429
+ID- 19067 , Common Name-   , Dist- 237.5297 , X- 113.424375, Y- 208.681004 , Z- -2.740011
+ID- 18423 , Common Name-   , Dist- 220.7506 , X- 112.965989, Y- 189.625594 , Z- -3.412693
+ID- 19640 , Common Name-   , Dist- 216.9197 , X- 97.323487, Y- 193.174247 , Z- -16.309667
+

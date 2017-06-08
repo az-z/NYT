@@ -1,0 +1,24 @@
+
+NYT assigment:
+
+	1. SQL:
+			schema.sql - all you need to reacreate the environment.
+			Solution.txt - sql code with the results.
+
+	2. Find stars:
+		 i took time to research the db solution (vs read file) is a scalable, alternative to the line-by-line file reading. I build the script leveraging the sqlite db.
+		I didn't implement the section one - it is a simple search based on the calculated euclidean distance ( something like:
+			def distance(p, q):
+				return np.sqrt(np.sum((np.array(p) - np.array(p)) ** 2))
+ )
+			DATA/
+				 dir is used to setup the DB prior to running the python (findstars) script. do this first.
+			src/
+				findstars script. 
+				Read.me		- results and examples.
+	3. System Design
+			Doc/
+				SysD.txt
+			
+		
+	
